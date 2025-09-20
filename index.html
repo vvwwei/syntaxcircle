@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動式圓形動畫</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="control-panel">
+            <h2>控制面板</h2>
+            
+            <!-- 圓形控制 -->
+            <div class="circle-controls">
+                <div class="circle-group" id="circle1">
+                    <h3>圓形 1 (最大)</h3>
+                    <div class="control-item">
+                        <label>文字內容:</label>
+                        <input type="text" class="text-input" value="SYNTAX" placeholder="輸入文字">
+                    </div>
+                    <div class="control-item">
+                        <label>旋轉速度:</label>
+                        <input type="range" class="speed-slider" min="-5" max="5" value="1" step="0.1">
+                        <span class="speed-value">1.0</span>
+                    </div>
+                    <div class="control-item">
+                        <label>線條顏色:</label>
+                        <input type="color" class="color-picker" value="#000000">
+                    </div>
+                    <div class="control-item">
+                        <label>半徑:</label>
+                        <input type="range" class="radius-slider" min="50" max="300" value="250">
+                        <span class="radius-value">250</span>
+                    </div>
+                    <div class="control-item">
+                        <label>X位置:</label>
+                        <input type="range" class="x-pos-slider" min="-200" max="200" value="0">
+                        <span class="x-pos-value">0</span>
+                    </div>
+                    <div class="control-item">
+                        <label>Y位置:</label>
+                        <input type="range" class="y-pos-slider" min="-200" max="200" value="0">
+                        <span class="y-pos-value">0</span>
+                    </div>
+                    <div class="control-item">
+                        <label>同步目標:</label>
+                        <select class="sync-target">
+                            <option value="none">無同步</option>
+                            <option value="circle2">圓形 2</option>
+                            <option value="circle3">圓形 3</option>
+                            <option value="circle4">圓形 4</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="circle-group" id="circle2">
+                    <h3>圓形 2</h3>
+                    <div class="control-item">
+                        <label>文字內容:</label>
+                        <input type="text" class="text-input" value="INTERNATIONAL" placeholder="輸入文字">
+                    </div>
+                    <div class="control-item">
+                        <label>旋轉速度:</label>
+                        <input type="range" class="speed-slider" min="-5" max="5" value="-0.8" step="0.1">
+                        <span class="speed-value">-0.8</span>
+                    </div>
+                    <div class="control-item">
+                        <label>線條顏色:</label>
+                        <input type="color" class="color-picker" value="#000000">
+                    </div>
+                    <div class="control-item">
+                        <label>半徑:</label>
+                        <input type="range" class="radius-slider" min="50" max="300" value="200">
+                        <span class="radius-value">200</span>
+                    </div>
+                    <div class="control-item">
+                        <label>X位置:</label>
+                        <input type="range" class="x-pos-slider" min="-200" max="200" value="0">
+                        <span class="x-pos-value">0</span>
+                    </div>
+                    <div class="control-item">
+                        <label>Y位置:</label>
+                        <input type="range" class="y-pos-slider" min="-200" max="200" value="0">
+                        <span class="y-pos-value">0</span>
+                    </div>
+                    <div class="control-item">
+                        <label>同步目標:</label>
+                        <select class="sync-target">
+                            <option value="none">無同步</option>
+                            <option value="circle1">圓形 1</option>
+                            <option value="circle3">圓形 3</option>
+                            <option value="circle4">圓形 4</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="circle-group" id="circle3">
+                    <h3>圓形 3</h3>
+                    <div class="control-item">
+                        <label>文字內容:</label>
+                        <input type="text" class="text-input" value="COMPARATIVE" placeholder="輸入文字">
+                    </div>
+                    <div class="control-item">
+                        <label>旋轉速度:</label>
+                        <input type="range" class="speed-slider" min="-5" max="5" value="1.5" step="0.1">
+                        <span class="speed-value">1.5</span>
+                    </div>
+                    <div class="control-item">
+                        <label>線條顏色:</label>
+                        <input type="color" class="color-picker" value="#000000">
+                    </div>
+                    <div class="control-item">
+                        <label>半徑:</label>
+                        <input type="range" class="radius-slider" min="50" max="300" value="150">
+                        <span class="radius-value">150</span>
+                    </div>
+                    <div class="control-item">
+                        <label>X位置:</label>
+                        <input type="range" class="x-pos-slider" min="-200" max="200" value="0">
+                        <span class="x-pos-value">0</span>
+                    </div>
+                    <div class="control-item">
+                        <label>Y位置:</label>
+                        <input type="range" class="y-pos-slider" min="-200" max="200" value="0">
+                        <span class="y-pos-value">0</span>
+                    </div>
+                    <div class="control-item">
+                        <label>同步目標:</label>
+                        <select class="sync-target">
+                            <option value="none">無同步</option>
+                            <option value="circle1">圓形 1</option>
+                            <option value="circle2">圓形 2</option>
+                            <option value="circle4">圓形 4</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="circle-group" id="circle4">
+                    <h3>圓形 4 (最小)</h3>
+                    <div class="control-item">
+                        <label>文字內容:</label>
+                        <input type="text" class="text-input" value="NP VP AP NP  COMP  " placeholder="輸入文字">
+                    </div>
+                    <div class="control-item">
+                        <label>旋轉速度:</label>
+                        <input type="range" class="speed-slider" min="-5" max="5" value="-2" step="0.1">
+                        <span class="speed-value">-2.0</span>
+                    </div>
+                    <div class="control-item">
+                        <label>線條顏色:</label>
+                        <input type="color" class="color-picker" value="#8e44ad">
+                    </div>
+                    <div class="control-item">
+                        <label>半徑:</label>
+                        <input type="range" class="radius-slider" min="50" max="300" value="100">
+                        <span class="radius-value">100</span>
+                    </div>
+                    <div class="control-item">
+                        <label>X位置:</label>
+                        <input type="range" class="x-pos-slider" min="-200" max="200" value="15">
+                        <span class="x-pos-value">15</span>
+                    </div>
+                    <div class="control-item">
+                        <label>Y位置:</label>
+                        <input type="range" class="y-pos-slider" min="-200" max="200" value="0">
+                        <span class="y-pos-value">0</span>
+                    </div>
+                    <div class="control-item">
+                        <label>同步目標:</label>
+                        <select class="sync-target">
+                            <option value="none">無同步</option>
+                            <option value="circle1">圓形 1</option>
+                            <option value="circle2">圓形 2</option>
+                            <option value="circle3">圓形 3</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 連結線控制 -->
+            <div class="connection-controls">
+                <h3>連結線設定</h3>
+                <div class="control-item">
+                    <label>連結圓形:</label>
+                    <select id="connection-from">
+                        <option value="none">選擇起點</option>
+                        <option value="circle1">圓形 1</option>
+                        <option value="circle2">圓形 2</option>
+                        <option value="circle3" selected>圓形 3</option>
+                        <option value="circle4">圓形 4</option>
+                    </select>
+                    <span> → </span>
+                    <select id="connection-to">
+                        <option value="none">選擇終點</option>
+                        <option value="circle1">圓形 1</option>
+                        <option value="circle2">圓形 2</option>
+                        <option value="circle3">圓形 3</option>
+                        <option value="circle4" selected>圓形 4</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label>連結線顏色:</label>
+                    <input type="color" id="connection-color" value="#8e44ad">
+                </div>
+                <button id="toggle-connection">關閉連結線</button>
+            </div>
+
+            <!-- 匯出控制 -->
+            <div class="export-controls">
+                <h3>匯出功能</h3>
+                <div class="control-item">
+                    <label>匯出格式:</label>
+                    <select id="export-format">
+                        <option value="png">PNG 圖片</option>
+                        <option value="mp4">MP4 高畫質影片</option>
+                        <option value="frames">影格序列 (多張PNG)</option>
+                    </select>
+                </div>
+                <div class="control-item gif-options" style="display: none;">
+                    <label>動畫秒數:</label>
+                    <input type="range" id="gif-duration" min="2" max="10" value="5" step="1">
+                    <span id="gif-duration-value">5</span> 秒
+                </div>
+                <button id="export-btn" class="btn-export">開始匯出</button>
+                <div id="export-status" style="display: none;"></div>
+            </div>
+
+            <!-- 主控制按鈕 -->
+            <div class="main-controls">
+                <button id="play-pause-btn" class="btn-primary">暫停</button>
+                <button id="reset-btn" class="btn-secondary">重置</button>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <div id="canvas-placeholder"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
