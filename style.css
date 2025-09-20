@@ -357,10 +357,10 @@ input:disabled, select:disabled {
     .control-panel {
         width: 100%;
         height: auto;
-        max-height: 45vh;
+        max-height: 40vh; /* 減少控制面板高度 */
         border-right: none;
         border-bottom: 2px solid #e9ecef;
-        padding: 15px;
+        padding: 12px; /* 減少內邊距 */
         overflow-y: auto;
         -webkit-overflow-scrolling: touch; /* iOS 平滑滾動 */
         background: white;
@@ -487,9 +487,9 @@ input:disabled, select:disabled {
     }
     
     .canvas-container {
-        height: 55vh;
-        min-height: 320px;
-        padding: 10px;
+        height: 60vh; /* 增加畫布高度 */
+        min-height: 350px; /* 增加最小高度 */
+        padding: 8px; /* 減少內邊距 */
         overflow: hidden;
         display: flex;
         justify-content: center;
