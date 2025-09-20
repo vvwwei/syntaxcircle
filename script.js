@@ -101,7 +101,20 @@ class Circle {
 }
 
 function setup() {
-    canvas = createCanvas(window.innerWidth - 350, window.innerHeight);
+    // 響應式畫布大小設定
+    let canvasWidth, canvasHeight;
+    
+    if (window.innerWidth <= 768) {
+        // 手機版：使用全寬度，高度為視窗高度的50%
+        canvasWidth = window.innerWidth - 20; // 留10px邊距
+        canvasHeight = window.innerHeight * 0.5;
+    } else {
+        // 桌面版：原有設定
+        canvasWidth = window.innerWidth - 350;
+        canvasHeight = window.innerHeight;
+    }
+    
+    canvas = createCanvas(canvasWidth, canvasHeight);
     canvas.parent('canvas-placeholder');
     
     circles = [
@@ -515,5 +528,18 @@ function enableControls(group) {
 }
 
 function windowResized() {
-    resizeCanvas(window.innerWidth - 350, window.innerHeight);
+    // 響應式視窗大小調整
+    let canvasWidth, canvasHeight;
+    
+    if (window.innerWidth <= 768) {
+        // 手機版
+        canvasWidth = window.innerWidth - 20;
+        canvasHeight = window.innerHeight * 0.5;
+    } else {
+        // 桌面版
+        canvasWidth = window.innerWidth - 350;
+        canvasHeight = window.innerHeight;
+    }
+    
+    resizeCanvas(canvasWidth, canvasHeight);
 }
