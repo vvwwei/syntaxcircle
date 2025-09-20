@@ -103,11 +103,17 @@ class Circle {
 function setup() {
     // 響應式畫布大小設定
     let canvasWidth, canvasHeight;
+    let isMobile = window.innerWidth <= 768;
     
-    if (window.innerWidth <= 768) {
-        // 手機版：使用全寬度，高度為視窗高度的50%
-        canvasWidth = window.innerWidth - 20; // 留10px邊距
-        canvasHeight = window.innerHeight * 0.5;
+    if (isMobile) {
+        // 手機版：保持正方形比例，確保穩定顯示
+        const availableWidth = window.innerWidth - 40; // 增加邊距
+        const availableHeight = Math.max(250, window.innerHeight * 0.55); // 確保最小高度
+        
+        // 使用較小的尺寸作為畫布大小，但設定合理的最小值
+        const canvasSize = Math.max(280, Math.min(availableWidth, availableHeight));
+        canvasWidth = canvasSize;
+        canvasHeight = canvasSize;
     } else {
         // 桌面版：原有設定
         canvasWidth = window.innerWidth - 350;
@@ -117,14 +123,50 @@ function setup() {
     canvas = createCanvas(canvasWidth, canvasHeight);
     canvas.parent('canvas-placeholder');
     
-    circles = [
-        new Circle('circle1', defaultTexts[0], 1, '#000000', 250),
-        new Circle('circle2', defaultTexts[1], -0.8, '#000000', 200),
-        new Circle('circle3', defaultTexts[2], 1.5, '#000000', 150),
-        new Circle('circle4', defaultTexts[3], -2, '#8e44ad', 100, 15, 0)
-    ];
+    // 根據螢幕大小調整圓形尺寸
+    if (isMobile) {
+        // 手機版：適當的圓形大小，不要太小
+        const scaleFactor = Math.max(0.4, canvasWidth / 600); // 最小縮放到40%，避免圓形太小
+        circles = [
+            new Circle('circle1', defaultTexts[0], 1, '#000000', Math.floor(180 * scaleFactor)),
+            new Circle('circle2', defaultTexts[1], -0.8, '#000000', Math.floor(140 * scaleFactor)),
+            new Circle('circle3', defaultTexts[2], 1.5, '#000000', Math.floor(100 * scaleFactor)),
+            new Circle('circle4', defaultTexts[3], -2, '#8e44ad', Math.floor(70 * scaleFactor), Math.floor(12 * scaleFactor), 0)
+        ];
+    } else {
+        // 桌面版：原有尺寸
+        circles = [
+            new Circle('circle1', defaultTexts[0], 1, '#000000', 250),
+            new Circle('circle2', defaultTexts[1], -0.8, '#000000', 200),
+            new Circle('circle3', defaultTexts[2], 1.5, '#000000', 150),
+            new Circle('circle4', defaultTexts[3], -2, '#8e44ad', 100, 15, 0)
+        ];
+    }
     
     setupEventListeners();
+    
+    // 手機版調整控制項範圍
+    if (isMobile) {
+        adjustMobileControlRanges();
+    }
+}
+
+function adjustMobileControlRanges() {
+    // 調整半徑滑桿的最大值以適應手機螢幕
+    const maxRadius = Math.min(canvas.width, canvas.height) / 3; // 畫布的1/3作為最大半徑
+    
+    document.querySelectorAll('.radius-slider').forEach(slider => {
+        slider.max = Math.floor(maxRadius);
+        slider.min = 20; // 設定最小半徑
+    });
+    
+    // 調整位置滑桿的範圍
+    const maxPosition = Math.min(canvas.width, canvas.height) / 4; // 畫布的1/4作為最大位移
+    
+    document.querySelectorAll('.x-pos-slider, .y-pos-slider').forEach(slider => {
+        slider.min = -Math.floor(maxPosition);
+        slider.max = Math.floor(maxPosition);
+    });
 }
 
 function draw() {
@@ -260,12 +302,26 @@ function setupEventListeners() {
             circle.syncTarget = null;
         });
         
-        const defaultValues = [
-            { text: defaultTexts[0], speed: 1, color: '#000000', radius: 250, x: 0, y: 0 },
-            { text: defaultTexts[1], speed: -0.8, color: '#000000', radius: 200, x: 0, y: 0 },
-            { text: defaultTexts[2], speed: 1.5, color: '#000000', radius: 150, x: 0, y: 0 },
-            { text: defaultTexts[3], speed: -2, color: '#8e44ad', radius: 100, x: 15, y: 0 }
-        ];
+        // 根據螢幕大小設定預設值
+        let defaultValues;
+        if (window.innerWidth <= 768) {
+            // 手機版：使用適當大小，避免太小
+            const scaleFactor = Math.max(0.4, canvas.width / 600);
+            defaultValues = [
+                { text: defaultTexts[0], speed: 1, color: '#000000', radius: Math.floor(180 * scaleFactor), x: 0, y: 0 },
+                { text: defaultTexts[1], speed: -0.8, color: '#000000', radius: Math.floor(140 * scaleFactor), x: 0, y: 0 },
+                { text: defaultTexts[2], speed: 1.5, color: '#000000', radius: Math.floor(100 * scaleFactor), x: 0, y: 0 },
+                { text: defaultTexts[3], speed: -2, color: '#8e44ad', radius: Math.floor(70 * scaleFactor), x: Math.floor(12 * scaleFactor), y: 0 }
+            ];
+        } else {
+            // 桌面版：原始尺寸
+            defaultValues = [
+                { text: defaultTexts[0], speed: 1, color: '#000000', radius: 250, x: 0, y: 0 },
+                { text: defaultTexts[1], speed: -0.8, color: '#000000', radius: 200, x: 0, y: 0 },
+                { text: defaultTexts[2], speed: 1.5, color: '#000000', radius: 150, x: 0, y: 0 },
+                { text: defaultTexts[3], speed: -2, color: '#8e44ad', radius: 100, x: 15, y: 0 }
+            ];
+        }
         
         circles.forEach((circle, index) => {
             const defaults = defaultValues[index];
@@ -527,14 +583,31 @@ function enableControls(group) {
     });
 }
 
+// 防抖動變數
+let resizeTimeout;
+
 function windowResized() {
+    // 使用防抖動，避免頻繁調整造成卡頓
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        actualWindowResize();
+    }, 150);
+}
+
+function actualWindowResize() {
     // 響應式視窗大小調整
     let canvasWidth, canvasHeight;
+    let isMobile = window.innerWidth <= 768;
     
-    if (window.innerWidth <= 768) {
-        // 手機版
-        canvasWidth = window.innerWidth - 20;
-        canvasHeight = window.innerHeight * 0.5;
+    if (isMobile) {
+        // 手機版：保持正方形比例，確保穩定顯示
+        const availableWidth = window.innerWidth - 40;
+        const availableHeight = Math.max(250, window.innerHeight * 0.55);
+        
+        // 使用較小的尺寸作為畫布大小，但設定合理的最小值
+        const canvasSize = Math.max(280, Math.min(availableWidth, availableHeight));
+        canvasWidth = canvasSize;
+        canvasHeight = canvasSize;
     } else {
         // 桌面版
         canvasWidth = window.innerWidth - 350;
@@ -542,4 +615,51 @@ function windowResized() {
     }
     
     resizeCanvas(canvasWidth, canvasHeight);
+    
+    // 重新調整圓形大小
+    if (isMobile) {
+        const scaleFactor = Math.max(0.4, canvasWidth / 600); // 確保不會太小
+        circles[0].radius = Math.floor(180 * scaleFactor);
+        circles[1].radius = Math.floor(140 * scaleFactor);
+        circles[2].radius = Math.floor(100 * scaleFactor);
+        circles[3].radius = Math.floor(70 * scaleFactor);
+        circles[3].x = Math.floor(12 * scaleFactor);
+    } else {
+        // 桌面版恢復原始大小
+        circles[0].radius = 250;
+        circles[1].radius = 200;
+        circles[2].radius = 150;
+        circles[3].radius = 100;
+        circles[3].x = 15;
+    }
+    
+    // 更新HTML控制項的顯示值
+    updateControlValues();
+    
+    // 手機版調整控制項範圍
+    if (isMobile) {
+        adjustMobileControlRanges();
+    }
+}
+
+function updateControlValues() {
+    circles.forEach((circle, index) => {
+        const group = document.getElementById(circle.id);
+        if (group) {
+            const radiusSlider = group.querySelector('.radius-slider');
+            const radiusValue = group.querySelector('.radius-value');
+            const xPosSlider = group.querySelector('.x-pos-slider');
+            const xPosValue = group.querySelector('.x-pos-value');
+            
+            if (radiusSlider && radiusValue) {
+                radiusSlider.value = circle.radius;
+                radiusValue.textContent = circle.radius;
+            }
+            
+            if (xPosSlider && xPosValue) {
+                xPosSlider.value = circle.x;
+                xPosValue.textContent = circle.x;
+            }
+        }
+    });
 }
