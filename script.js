@@ -107,11 +107,11 @@ function setup() {
     
     if (isMobile) {
         // 手機版：保持正方形比例，確保穩定顯示
-        const availableWidth = window.innerWidth - 40; // 增加邊距
+        const availableWidth = window.innerWidth - 60; // 增加邊距，避免裁切
         const availableHeight = Math.max(250, window.innerHeight * 0.55); // 確保最小高度
         
         // 使用較小的尺寸作為畫布大小，但設定合理的最小值
-        const canvasSize = Math.max(280, Math.min(availableWidth, availableHeight));
+        const canvasSize = Math.max(300, Math.min(availableWidth, availableHeight));
         canvasWidth = canvasSize;
         canvasHeight = canvasSize;
     } else {
@@ -125,8 +125,10 @@ function setup() {
     
     // 根據螢幕大小調整圓形尺寸
     if (isMobile) {
-        // 手機版：適當的圓形大小，不要太小
-        const scaleFactor = Math.max(0.4, canvasWidth / 600); // 最小縮放到40%，避免圓形太小
+        // 手機版：確保最大圓形不超出畫布邊界
+        const maxRadius = Math.min(canvasWidth, canvasHeight) / 2 - 20; // 留20px邊距
+        const scaleFactor = Math.min(0.8, maxRadius / 180); // 基於最大圓形(180)計算縮放，最大80%
+        
         circles = [
             new Circle('circle1', defaultTexts[0], 1, '#000000', Math.floor(180 * scaleFactor)),
             new Circle('circle2', defaultTexts[1], -0.8, '#000000', Math.floor(140 * scaleFactor)),
@@ -152,17 +154,17 @@ function setup() {
 }
 
 function adjustMobileControlRanges() {
-    // 調整半徑滑桿的最大值以適應手機螢幕
-    const maxRadius = Math.min(canvas.width, canvas.height) / 3; // 畫布的1/3作為最大半徑
-    
+    // 調整半徑滑桿的最大值以適應手機螢幕，確保不超出邊界
+    const maxRadius = Math.min(canvas.width, canvas.height) / 2 - 20; // 畫布的一半減去邊距
+
     document.querySelectorAll('.radius-slider').forEach(slider => {
         slider.max = Math.floor(maxRadius);
         slider.min = 20; // 設定最小半徑
     });
-    
+
     // 調整位置滑桿的範圍
     const maxPosition = Math.min(canvas.width, canvas.height) / 4; // 畫布的1/4作為最大位移
-    
+
     document.querySelectorAll('.x-pos-slider, .y-pos-slider').forEach(slider => {
         slider.min = -Math.floor(maxPosition);
         slider.max = Math.floor(maxPosition);
@@ -305,8 +307,10 @@ function setupEventListeners() {
         // 根據螢幕大小設定預設值
         let defaultValues;
         if (window.innerWidth <= 768) {
-            // 手機版：使用適當大小，避免太小
-            const scaleFactor = Math.max(0.4, canvas.width / 600);
+            // 手機版：確保最大圓形不超出畫布邊界
+            const maxRadius = Math.min(canvas.width, canvas.height) / 2 - 20;
+            const scaleFactor = Math.min(0.8, maxRadius / 180);
+            
             defaultValues = [
                 { text: defaultTexts[0], speed: 1, color: '#000000', radius: Math.floor(180 * scaleFactor), x: 0, y: 0 },
                 { text: defaultTexts[1], speed: -0.8, color: '#000000', radius: Math.floor(140 * scaleFactor), x: 0, y: 0 },
@@ -601,11 +605,11 @@ function actualWindowResize() {
     
     if (isMobile) {
         // 手機版：保持正方形比例，確保穩定顯示
-        const availableWidth = window.innerWidth - 40;
+        const availableWidth = window.innerWidth - 60; // 增加邊距，避免裁切
         const availableHeight = Math.max(250, window.innerHeight * 0.55);
         
         // 使用較小的尺寸作為畫布大小，但設定合理的最小值
-        const canvasSize = Math.max(280, Math.min(availableWidth, availableHeight));
+        const canvasSize = Math.max(300, Math.min(availableWidth, availableHeight));
         canvasWidth = canvasSize;
         canvasHeight = canvasSize;
     } else {
@@ -618,7 +622,10 @@ function actualWindowResize() {
     
     // 重新調整圓形大小
     if (isMobile) {
-        const scaleFactor = Math.max(0.4, canvasWidth / 600); // 確保不會太小
+        // 確保最大圓形不超出畫布邊界
+        const maxRadius = Math.min(canvasWidth, canvasHeight) / 2 - 20; // 留20px邊距
+        const scaleFactor = Math.min(0.8, maxRadius / 180); // 基於最大圓形(180)計算縮放
+        
         circles[0].radius = Math.floor(180 * scaleFactor);
         circles[1].radius = Math.floor(140 * scaleFactor);
         circles[2].radius = Math.floor(100 * scaleFactor);
